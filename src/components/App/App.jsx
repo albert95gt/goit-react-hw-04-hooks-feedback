@@ -1,45 +1,52 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
 import Wrapper from '../Wrapper';
 import Statistics from '../Statistics';
 import FeedbackOptions from '../FeedbackOptions';
 import Section from '../Section';
 import Notification from '../Notification';
 
-class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
+const App = () => {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
 
-  onClickFeedbackCount = event => {
+  const onClickFeedbackCount = event => {
     const options = event.currentTarget.textContent;
+    switch (options) {
+      case "good":
+        setGood(good + 1);
+        break;
+      case "neutral":
+        setNeutral(neutral + 1);
+        break;
+      case "bad":
+        setBad(bad + 1);
+        break;    
 
-    this.setState(prevState => ({
-      [options]: prevState[options] + 1,
-    }));
+      default:
+        return;
+    }
   };
-  countTotalFeedback = () => {
-    const stateValue = Object.values(this.state);
-    const total = stateValue.reduce((acc, value) => acc + value);
-    return total;
+  const stateKeys = Object.keys({good, neutral, bad});
+  
+  const countTotalFeedback = () => {
+    const totalFeedback = good + neutral + bad;
+    return totalFeedback;
   };
-  countPositiveFeedbackPercentage = total => {
-    const totalPercenage = (this.state.good / total) * 100;
+  const total = countTotalFeedback();
+
+  const countPositiveFeedbackPercentage = () => {
+
+    const totalPercenage = (good / total) * 100;
     return Math.round(totalPercenage);
   };
-
-  render() {
-    const stateKeys = Object.keys(this.state);
-    const { good, neutral, bad } = this.state;
-    const total = this.countTotalFeedback();
-    const positiveFeedback = this.countPositiveFeedbackPercentage(total);
+    const positiveFeedback = countPositiveFeedbackPercentage();
     return (
       <Wrapper title="">
         <Section title="Please leave feedback">
           <FeedbackOptions
             options={stateKeys}
-            onLeaveFeedback={this.onClickFeedbackCount}
+            onLeaveFeedback={onClickFeedbackCount}
           />
         </Section>
 
@@ -58,7 +65,8 @@ class App extends Component {
         </Section>
       </Wrapper>
     );
-  }
+  
 }
-
+ 
 export default App;
+
